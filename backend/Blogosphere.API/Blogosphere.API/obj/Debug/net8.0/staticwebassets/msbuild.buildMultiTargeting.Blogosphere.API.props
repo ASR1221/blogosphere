@@ -1,0 +1,3 @@
+﻿<Project>
+  <Import Project="..\build\Blogosphere.API.props" />
+</Project>
