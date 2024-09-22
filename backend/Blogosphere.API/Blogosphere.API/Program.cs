@@ -1,3 +1,6 @@
+using Blogosphere.API.Models;
+using Microsoft.EntityFrameworkCore;
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -7,13 +10,24 @@ builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
 builder.Services.AddSwaggerGen();
 
+string connectionString = builder.Configuration["MySQLDbConnectionString"] ?? "";
+
+builder.Services.AddDbContext<AppDbContext>(
+	dbContextOptions => dbContextOptions
+		.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString))
+		// TODO: should be changed or removed for production.
+		.LogTo(Console.WriteLine, LogLevel.Warning)
+		.EnableSensitiveDataLogging()
+		.EnableDetailedErrors()
+);
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
 if (app.Environment.IsDevelopment())
 {
-    app.UseSwagger();
-    app.UseSwaggerUI();
+	app.UseSwagger();
+	app.UseSwaggerUI();
 }
 
 app.UseHttpsRedirection();
