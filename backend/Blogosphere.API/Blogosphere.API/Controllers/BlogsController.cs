@@ -3,11 +3,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace Blogosphere.API.Controllers
 {
     [ApiController]
-    [Route("[controller]")]
+    [Route("api/[controller]")]
     public class BlogsController : ControllerBase
     {
 
-        [HttpGet]
+        [HttpGet("forecast")] // This is a public endpoint (no auth needed, if auth needed use [HttpGet("secure")], and use [Authorize] when needed)
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IEnumerable<string> Get()

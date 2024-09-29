@@ -1,18 +1,13 @@
-using System.ComponentModel.DataAnnotations;
-using Microsoft.EntityFrameworkCore;
+using Microsoft.AspNetCore.Identity;
 
 namespace Blogosphere.API.Models.Entities;
 
-[Index(nameof(Email), IsUnique = true)]
-public class User : BaseModel
+public class User : IdentityUser
 {
-   public required string Name { get; set; }
-
-   public required string Email { get; set; }
-
-   public required string Password { get; set; }
-
    public string? Image { get; set; }
 
-   public bool IsVerified { get; set; } = false;
+   public DateTime CreatedAt { get; set; } = DateTime.Now;
+
+   public DateTime EditedAt { get; set; } = DateTime.Now;
+
 }

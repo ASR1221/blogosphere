@@ -103,3 +103,17 @@ C:\Users\abdul\Personal\dev\personal_projects\Blogosphere\backend\Blogosphere.AP
 C:\Users\abdul\Personal\dev\personal_projects\Blogosphere\backend\Blogosphere.API\Blogosphere.API\bin\Debug\net8.0\tr\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\abdul\Personal\dev\personal_projects\Blogosphere\backend\Blogosphere.API\Blogosphere.API\bin\Debug\net8.0\zh-Hans\Microsoft.CodeAnalysis.Workspaces.resources.dll
 C:\Users\abdul\Personal\dev\personal_projects\Blogosphere\backend\Blogosphere.API\Blogosphere.API\bin\Debug\net8.0\zh-Hant\Microsoft.CodeAnalysis.Workspaces.resources.dll
+C:\Users\abdul\Personal\dev\personal_projects\Blogosphere\backend\Blogosphere.API\Blogosphere.API\bin\Debug\net8.0\Microsoft.AspNetCore.Authentication.JwtBearer.dll
+C:\Users\abdul\Personal\dev\personal_projects\Blogosphere\backend\Blogosphere.API\Blogosphere.API\bin\Debug\net8.0\Microsoft.AspNetCore.Cryptography.Internal.dll
+C:\Users\abdul\Personal\dev\personal_projects\Blogosphere\backend\Blogosphere.API\Blogosphere.API\bin\Debug\net8.0\Microsoft.AspNetCore.Cryptography.KeyDerivation.dll
+C:\Users\abdul\Personal\dev\personal_projects\Blogosphere\backend\Blogosphere.API\Blogosphere.API\bin\Debug\net8.0\Microsoft.AspNetCore.Identity.EntityFrameworkCore.dll
+C:\Users\abdul\Personal\dev\personal_projects\Blogosphere\backend\Blogosphere.API\Blogosphere.API\bin\Debug\net8.0\Microsoft.Extensions.Identity.Core.dll
+C:\Users\abdul\Personal\dev\personal_projects\Blogosphere\backend\Blogosphere.API\Blogosphere.API\bin\Debug\net8.0\Microsoft.Extensions.Identity.Stores.dll
+C:\Users\abdul\Personal\dev\personal_projects\Blogosphere\backend\Blogosphere.API\Blogosphere.API\bin\Debug\net8.0\Microsoft.Extensions.Options.dll
+C:\Users\abdul\Personal\dev\personal_projects\Blogosphere\backend\Blogosphere.API\Blogosphere.API\bin\Debug\net8.0\Microsoft.IdentityModel.Abstractions.dll
+C:\Users\abdul\Personal\dev\personal_projects\Blogosphere\backend\Blogosphere.API\Blogosphere.API\bin\Debug\net8.0\Microsoft.IdentityModel.JsonWebTokens.dll
+C:\Users\abdul\Personal\dev\personal_projects\Blogosphere\backend\Blogosphere.API\Blogosphere.API\bin\Debug\net8.0\Microsoft.IdentityModel.Logging.dll
+C:\Users\abdul\Personal\dev\personal_projects\Blogosphere\backend\Blogosphere.API\Blogosphere.API\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.dll
+C:\Users\abdul\Personal\dev\personal_projects\Blogosphere\backend\Blogosphere.API\Blogosphere.API\bin\Debug\net8.0\Microsoft.IdentityModel.Protocols.OpenIdConnect.dll
+C:\Users\abdul\Personal\dev\personal_projects\Blogosphere\backend\Blogosphere.API\Blogosphere.API\bin\Debug\net8.0\Microsoft.IdentityModel.Tokens.dll
+C:\Users\abdul\Personal\dev\personal_projects\Blogosphere\backend\Blogosphere.API\Blogosphere.API\bin\Debug\net8.0\System.IdentityModel.Tokens.Jwt.dll
