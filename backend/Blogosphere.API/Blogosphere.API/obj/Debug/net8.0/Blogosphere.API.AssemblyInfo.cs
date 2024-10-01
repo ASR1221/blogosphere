@@ -14,7 +14,7 @@ using System.Reflection;
 [assembly: System.Reflection.AssemblyCompanyAttribute("Blogosphere.API")]
 [assembly: System.Reflection.AssemblyConfigurationAttribute("Debug")]
 [assembly: System.Reflection.AssemblyFileVersionAttribute("1.0.0.0")]
-[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+aabec68a49b1e5674352257f3bea21183e77e0a0")]
+[assembly: System.Reflection.AssemblyInformationalVersionAttribute("1.0.0+2280d2f8f84142f89675a86a347e192310bca418")]
 [assembly: System.Reflection.AssemblyProductAttribute("Blogosphere.API")]
 [assembly: System.Reflection.AssemblyTitleAttribute("Blogosphere.API")]
 [assembly: System.Reflection.AssemblyVersionAttribute("1.0.0.0")]
