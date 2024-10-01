@@ -9,8 +9,8 @@ using Microsoft.IdentityModel.Tokens;
 public interface IAuthService
 {
    Task<AuthResponseDto> Register(RegisterDto model);
-   Task<AuthResponseDto> Login(LoginDto model);
-   Task<AuthResponseDto> Refresh(string userId);
+   Task<AuthResponseDto?> Login(LoginDto model);
+   Task<AuthResponseDto?> Refresh(string userId);
 }
 
 public class AuthService : IAuthService
@@ -40,14 +40,14 @@ public class AuthService : IAuthService
       throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
    }
 
-   public async Task<AuthResponseDto> Login(LoginDto model)
+   public async Task<AuthResponseDto?> Login(LoginDto model)
    {
       var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
 
       if (result.Succeeded)
       {
          User? user = await _userManager.FindByEmailAsync(model.Email);
-         if (user == null) throw new Exception("User not found");
+         if (user == null) return null;
 
          var token = GenerateJwtToken(user);
          return new AuthResponseDto(token, "User logged in successfully");
@@ -56,10 +56,10 @@ public class AuthService : IAuthService
       throw new UnauthorizedAccessException("Invalid login attempt.");
    }
 
-   public async Task<AuthResponseDto> Refresh(string userId)
+   public async Task<AuthResponseDto?> Refresh(string userId)
    {
       User? user = await _userManager.FindByIdAsync(userId);
-      if (user == null) throw new Exception("User not found");
+      if (user == null) return null;
 
       var token = GenerateJwtToken(user);
       return new AuthResponseDto(token, "Token refreshed");

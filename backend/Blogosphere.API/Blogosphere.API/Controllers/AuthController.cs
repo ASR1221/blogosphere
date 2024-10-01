@@ -23,12 +23,20 @@ namespace Blogosphere.API.Controllers
       {
          try
          {
+            if (!ModelState.IsValid) {
+               return BadRequest(ModelState);
+            }
+
             var response = await _authService.Register(model);
             return Ok(response);
          }
          catch (Exception ex)
          {
-            return Problem(detail: ex.Message, title: "An error occurred", statusCode: StatusCodes.Status500InternalServerError);
+            return Problem(
+               detail: ex.Message, 
+               title: "An error occurred", 
+               statusCode: StatusCodes.Status500InternalServerError
+            );
          }
       }
 
@@ -42,7 +50,12 @@ namespace Blogosphere.API.Controllers
       {
          try
          {
+            if (!ModelState.IsValid) {
+               return BadRequest(ModelState);
+            }
+
             var response = await _authService.Login(model);
+            if (response == null) return NotFound();
             return Ok(response);
          }
          catch (UnauthorizedAccessException)
@@ -51,7 +64,11 @@ namespace Blogosphere.API.Controllers
          }
          catch (Exception ex)
          {
-            return Problem(detail: ex.Message, title: "An error occurred", statusCode: StatusCodes.Status500InternalServerError);
+            return Problem(
+               detail: ex.Message, 
+               title: "An error occurred", 
+               statusCode: StatusCodes.Status500InternalServerError
+            );
          }
       }
 
@@ -68,6 +85,7 @@ namespace Blogosphere.API.Controllers
             if (HttpContext.Items.TryGetValue("UserId", out var userId))
             {
                var response = await _authService.Refresh(userId?.ToString() ?? "");
+               if (response == null) return NotFound();
                return Ok(response);
             }
 
@@ -75,7 +93,11 @@ namespace Blogosphere.API.Controllers
          }
          catch (Exception ex)
          {
-            return Problem(detail: ex.Message, title: "An error occurred", statusCode: StatusCodes.Status500InternalServerError);
+            return Problem(
+               detail: ex.Message, 
+               title: "An error occurred", 
+               statusCode: StatusCodes.Status500InternalServerError
+            );
          }
       }
    }
