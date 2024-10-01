@@ -4,7 +4,7 @@ namespace Blogosphere.API.Models.Dtos;
 
 public record class LoginDto
 {
-
+   [Required]
    [EmailAddress]
    public required string Email { get; set; }
 

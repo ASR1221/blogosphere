@@ -5,8 +5,10 @@ namespace Blogosphere.API.Models.Dtos;
 public record class RegisterDto
 {
 
+   [Required]
    public required string UserName { get; set; }
 
+   [Required]
    [EmailAddress]
    public required string Email { get; set; }
 
