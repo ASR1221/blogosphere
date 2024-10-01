@@ -4,11 +4,11 @@ using Microsoft.AspNetCore.Mvc;
 namespace Blogosphere.API.Controllers
 {
     [ApiController]
-    [Route("api/[controller]")]
+    [Route("api/blogs")]
     public class BlogsController : ControllerBase
     {
 
-        [HttpGet("forecast")] // This is a public endpoint (no auth needed, if auth needed use [HttpGet("secure")], and use [Authorize] when needed)
+        [HttpGet]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         public IEnumerable<string> Get()
@@ -32,16 +32,19 @@ namespace Blogosphere.API.Controllers
         }
 
         [HttpPut("{id}")]
+        [RequireJwtValidation]
         public void Put(int id, [FromBody]string value)
         {
         }
 
         [HttpPatch("{id}")]
+        [RequireJwtValidation]
         public void Patch(int id, [FromBody]string value)
         {
         }
 
         [HttpDelete("{id}")]
+        [RequireJwtValidation]
         public void Delete(int id)
         {
         }
