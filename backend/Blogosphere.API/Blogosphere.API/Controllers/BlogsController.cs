@@ -1,3 +1,4 @@
+using Blogosphere.API.Middlewares;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blogosphere.API.Controllers
@@ -25,6 +26,7 @@ namespace Blogosphere.API.Controllers
         }
 
         [HttpPost]
+        [RequireJwtValidation]
         public void Post([FromBody]string value)
         {
         }
