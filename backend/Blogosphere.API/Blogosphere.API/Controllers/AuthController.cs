@@ -3,6 +3,7 @@ using System.Security.Claims;
 using System.Text;
 using Blogosphere.API.Middlewares;
 using Blogosphere.API.Models.Dtos;
+using Blogosphere.API.Models.Entities;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
@@ -13,11 +14,11 @@ namespace Blogosphere.API.Controllers
    [ApiController]
    public class AuthController : ControllerBase
    {
-      private readonly UserManager<IdentityUser> _userManager;
-      private readonly SignInManager<IdentityUser> _signInManager;
+      private readonly UserManager<User> _userManager;
+      private readonly SignInManager<User> _signInManager;
       private readonly IConfiguration _configuration;
 
-      public AuthController(UserManager<IdentityUser> userManager, SignInManager<IdentityUser> signInManager, IConfiguration configuration)
+      public AuthController(UserManager<User> userManager, SignInManager<User> signInManager, IConfiguration configuration)
       {
          _userManager = userManager;
          _signInManager = signInManager;
@@ -37,7 +38,7 @@ namespace Blogosphere.API.Controllers
                return BadRequest(ModelState);
             }
 
-            var user = new IdentityUser { UserName = model.UserName, Email = model.Email };
+            var user = new User { UserName = model.UserName, Email = model.Email };
             var result = await _userManager.CreateAsync(user, model.Password);
 
             if (result.Succeeded)
@@ -78,7 +79,7 @@ namespace Blogosphere.API.Controllers
 
             if (result.Succeeded)
             {
-               IdentityUser? user = await _userManager.FindByEmailAsync(model.Email);
+               User? user = await _userManager.FindByEmailAsync(model.Email);
                if (user == null) return NotFound();
 
                var token = GenerateJwtToken(user);
@@ -111,7 +112,7 @@ namespace Blogosphere.API.Controllers
          {
             if (HttpContext.Items.TryGetValue("UserId", out var userId))
             {
-               IdentityUser? user = await _userManager.FindByIdAsync(userId?.ToString() ?? "");
+               User? user = await _userManager.FindByIdAsync(userId?.ToString() ?? "");
                if (user == null) return NotFound();
 
                var token = GenerateJwtToken(user);
@@ -132,7 +133,7 @@ namespace Blogosphere.API.Controllers
          }
       }
 
-      private string GenerateJwtToken(IdentityUser user)
+      private string GenerateJwtToken(User user)
       {
          var claims = new List<Claim>
         {
