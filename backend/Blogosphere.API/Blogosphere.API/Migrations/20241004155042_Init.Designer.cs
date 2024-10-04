@@ -12,8 +12,8 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Blogosphere.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20240929083214_init")]
-    partial class init
+    [Migration("20241004155042_Init")]
+    partial class Init
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -37,8 +37,8 @@ namespace Blogosphere.API.Migrations
                         .IsRequired()
                         .HasColumnType("longtext");
 
-                    b.Property<int>("CategoryId")
-                        .HasColumnType("int");
+                    b.Property<string>("Category")
+                        .HasColumnType("longtext");
 
                     b.Property<int>("CommentsCount")
                         .HasColumnType("int");
@@ -66,34 +66,9 @@ namespace Blogosphere.API.Migrations
 
                     b.HasKey("Id");
 
-                    b.HasIndex("CategoryId");
-
                     b.HasIndex("UserId");
 
                     b.ToTable("Blogs");
-                });
-
-            modelBuilder.Entity("Blogosphere.API.Models.Entities.Category", b =>
-                {
-                    b.Property<int>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("int");
-
-                    MySqlPropertyBuilderExtensions.UseMySqlIdentityColumn(b.Property<int>("Id"));
-
-                    b.Property<DateTime>("CreatedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<DateTime>("EditedAt")
-                        .HasColumnType("datetime(6)");
-
-                    b.Property<string>("Title")
-                        .IsRequired()
-                        .HasColumnType("longtext");
-
-                    b.HasKey("Id");
-
-                    b.ToTable("Categories");
                 });
 
             modelBuilder.Entity("Blogosphere.API.Models.Entities.Comment", b =>
@@ -219,19 +194,11 @@ namespace Blogosphere.API.Migrations
 
             modelBuilder.Entity("Blogosphere.API.Models.Entities.Blog", b =>
                 {
-                    b.HasOne("Blogosphere.API.Models.Entities.Category", "Category")
-                        .WithMany()
-                        .HasForeignKey("CategoryId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
                     b.HasOne("Blogosphere.API.Models.Entities.User", "User")
                         .WithMany()
                         .HasForeignKey("UserId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
-
-                    b.Navigation("Category");
 
                     b.Navigation("User");
                 });

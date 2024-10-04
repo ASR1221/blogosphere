@@ -7,29 +7,12 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace Blogosphere.API.Migrations
 {
     /// <inheritdoc />
-    public partial class init : Migration
+    public partial class Init : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.AlterDatabase()
-                .Annotation("MySql:CharSet", "utf8mb4");
-
-            migrationBuilder.CreateTable(
-                name: "Categories",
-                columns: table => new
-                {
-                    Id = table.Column<int>(type: "int", nullable: false)
-                        .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
-                    Title = table.Column<string>(type: "longtext", nullable: false)
-                        .Annotation("MySql:CharSet", "utf8mb4"),
-                    CreatedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false),
-                    EditedAt = table.Column<DateTime>(type: "datetime(6)", nullable: false)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Categories", x => x.Id);
-                })
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateTable(
@@ -79,7 +62,8 @@ namespace Blogosphere.API.Migrations
                         .Annotation("MySql:ValueGenerationStrategy", MySqlValueGenerationStrategy.IdentityColumn),
                     UserId = table.Column<string>(type: "varchar(255)", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
-                    CategoryId = table.Column<int>(type: "int", nullable: false),
+                    Category = table.Column<string>(type: "longtext", nullable: true)
+                        .Annotation("MySql:CharSet", "utf8mb4"),
                     Title = table.Column<string>(type: "longtext", nullable: false)
                         .Annotation("MySql:CharSet", "utf8mb4"),
                     Body = table.Column<string>(type: "longtext", nullable: false)
@@ -94,12 +78,6 @@ namespace Blogosphere.API.Migrations
                 constraints: table =>
                 {
                     table.PrimaryKey("PK_Blogs", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Blogs_Categories_CategoryId",
-                        column: x => x.CategoryId,
-                        principalTable: "Categories",
-                        principalColumn: "Id",
-                        onDelete: ReferentialAction.Cascade);
                     table.ForeignKey(
                         name: "FK_Blogs_Users_UserId",
                         column: x => x.UserId,
@@ -160,11 +138,6 @@ namespace Blogosphere.API.Migrations
                 .Annotation("MySql:CharSet", "utf8mb4");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Blogs_CategoryId",
-                table: "Blogs",
-                column: "CategoryId");
-
-            migrationBuilder.CreateIndex(
                 name: "IX_Blogs_UserId",
                 table: "Blogs",
                 column: "UserId");
@@ -191,9 +164,6 @@ namespace Blogosphere.API.Migrations
 
             migrationBuilder.DropTable(
                 name: "Likes");
-
-            migrationBuilder.DropTable(
-                name: "Categories");
 
             migrationBuilder.DropTable(
                 name: "Users");
