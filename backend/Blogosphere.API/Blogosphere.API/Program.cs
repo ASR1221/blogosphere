@@ -1,4 +1,5 @@
 using System.Text;
+using Blogosphere.API.Middlewares;
 using Blogosphere.API.Models;
 using Blogosphere.API.Models.Entities;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
@@ -89,6 +90,8 @@ app.Use(async (context, next) =>
 
 app.UseAuthentication();
 app.UseAuthorization();
+
+app.UseJwtValidation();
 
 app.MapControllers();
 

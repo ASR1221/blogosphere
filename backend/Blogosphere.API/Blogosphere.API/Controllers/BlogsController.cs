@@ -96,10 +96,26 @@ namespace Blogosphere.API.Controllers
       [HttpGet("{id}")]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
-      public IActionResult Get(int id)
+      [ProducesResponseType(StatusCodes.Status500InternalServerError)]
+      public async Task<ActionResult<Blog>> Get([FromRoute] int id)
       {
-         List<string> res = [];
-         return Ok(res);
+         try {
+            var blog = await _context.Blogs
+               .FirstOrDefaultAsync(b => b.Id == id);
+
+            if (blog == null) {
+               return NotFound();
+            }
+
+            return Ok(blog);
+         }
+         catch (Exception ex) {
+            return Problem(
+               detail: ex.Message,
+               title: "An error occurred",
+               statusCode: StatusCodes.Status500InternalServerError
+            );
+         }
       }
 
       [HttpPost]
