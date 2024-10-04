@@ -12,7 +12,7 @@ using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 namespace Blogosphere.API.Migrations
 {
     [DbContext(typeof(AppDbContext))]
-    [Migration("20241004155042_Init")]
+    [Migration("20241004182309_Init")]
     partial class Init
     {
         /// <inheritdoc />

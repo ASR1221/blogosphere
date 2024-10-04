@@ -19,11 +19,12 @@ namespace Blogosphere.API.Controllers
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-      public async Task<ActionResult<AuthResponseDto>> Register([FromBody] RegisterDto model)
+      public async Task<ActionResult<SuccessResponseDto>> Register([FromBody] RegisterDto model)
       {
          try
          {
-            if (!ModelState.IsValid) {
+            if (!ModelState.IsValid)
+            {
                return BadRequest(ModelState);
             }
 
@@ -33,8 +34,8 @@ namespace Blogosphere.API.Controllers
          catch (Exception ex)
          {
             return Problem(
-               detail: ex.Message, 
-               title: "An error occurred", 
+               detail: ex.Message,
+               title: "An error occurred",
                statusCode: StatusCodes.Status500InternalServerError
             );
          }
@@ -46,11 +47,12 @@ namespace Blogosphere.API.Controllers
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-      public async Task<ActionResult<AuthResponseDto>> Login([FromBody] LoginDto model)
+      public async Task<ActionResult<SuccessResponseDto>> Login([FromBody] LoginDto model)
       {
          try
          {
-            if (!ModelState.IsValid) {
+            if (!ModelState.IsValid)
+            {
                return BadRequest(ModelState);
             }
 
@@ -65,8 +67,8 @@ namespace Blogosphere.API.Controllers
          catch (Exception ex)
          {
             return Problem(
-               detail: ex.Message, 
-               title: "An error occurred", 
+               detail: ex.Message,
+               title: "An error occurred",
                statusCode: StatusCodes.Status500InternalServerError
             );
          }
@@ -78,7 +80,7 @@ namespace Blogosphere.API.Controllers
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-      public async Task<ActionResult<AuthResponseDto>> Refresh()
+      public async Task<ActionResult<SuccessResponseDto>> Refresh()
       {
          try
          {
@@ -94,8 +96,8 @@ namespace Blogosphere.API.Controllers
          catch (Exception ex)
          {
             return Problem(
-               detail: ex.Message, 
-               title: "An error occurred", 
+               detail: ex.Message,
+               title: "An error occurred",
                statusCode: StatusCodes.Status500InternalServerError
             );
          }

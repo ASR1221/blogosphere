@@ -8,9 +8,9 @@ using Microsoft.IdentityModel.Tokens;
 
 public interface IAuthService
 {
-   Task<AuthResponseDto> Register(RegisterDto model);
-   Task<AuthResponseDto?> Login(LoginDto model);
-   Task<AuthResponseDto?> Refresh(string userId);
+   Task<SuccessResponseDto> Register(RegisterDto model);
+   Task<SuccessResponseDto?> Login(LoginDto model);
+   Task<SuccessResponseDto?> Refresh(string userId);
 }
 
 public class AuthService : IAuthService
@@ -26,7 +26,7 @@ public class AuthService : IAuthService
       _configuration = configuration;
    }
 
-   public async Task<AuthResponseDto> Register(RegisterDto model)
+   public async Task<SuccessResponseDto> Register(RegisterDto model)
    {
       var user = new User { UserName = model.UserName, Email = model.Email };
       var result = await _userManager.CreateAsync(user, model.Password);
@@ -34,13 +34,13 @@ public class AuthService : IAuthService
       if (result.Succeeded)
       {
          var token = GenerateJwtToken(user);
-         return new AuthResponseDto(token, "User registered successfully");
+         return new SuccessResponseDto(token, "User registered successfully");
       }
 
       throw new Exception(string.Join(", ", result.Errors.Select(e => e.Description)));
    }
 
-   public async Task<AuthResponseDto?> Login(LoginDto model)
+   public async Task<SuccessResponseDto?> Login(LoginDto model)
    {
       var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
 
@@ -50,19 +50,19 @@ public class AuthService : IAuthService
          if (user == null) return null;
 
          var token = GenerateJwtToken(user);
-         return new AuthResponseDto(token, "User logged in successfully");
+         return new SuccessResponseDto(token, "User logged in successfully");
       }
 
       throw new UnauthorizedAccessException("Invalid login attempt.");
    }
 
-   public async Task<AuthResponseDto?> Refresh(string userId)
+   public async Task<SuccessResponseDto?> Refresh(string userId)
    {
       User? user = await _userManager.FindByIdAsync(userId);
       if (user == null) return null;
 
       var token = GenerateJwtToken(user);
-      return new AuthResponseDto(token, "Token refreshed");
+      return new SuccessResponseDto(token, "Token refreshed");
    }
 
    private string GenerateJwtToken(User user)

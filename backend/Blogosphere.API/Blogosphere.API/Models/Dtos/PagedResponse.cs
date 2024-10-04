@@ -1,4 +1,4 @@
-namespace Blogosphere.API.Models.Entities;
+namespace Blogosphere.API.Models.Dtos;
 
 public class PagedResponse<T>
 {
