@@ -23,7 +23,7 @@ namespace Blogosphere.API.Controllers
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-      public async Task<ActionResult<PagedResponse<BlogResponseDto>>> Get(
+      public async Task<ActionResult<PagedResponse<BlogInListResponseDto>>> Get(
          [FromQuery(Name = "category")] string? category,
          [FromQuery(Name = "page")] int? page
       )
@@ -70,7 +70,7 @@ namespace Blogosphere.API.Controllers
                .Take(PageSize)
                .ToListAsync();
 
-            List<BlogResponseDto> responseBlogs = [];
+            List<BlogInListResponseDto> responseBlogs = [];
 
             if (blogs == null) return Problem(statusCode: StatusCodes.Status500InternalServerError);
             foreach (Blog blog in blogs)
@@ -82,8 +82,6 @@ namespace Blogosphere.API.Controllers
                   AutherName: blog?.User?.UserName ?? "",
                   Title: blog?.Title ?? "",
                   ThumbnailUrl: blog?.Thumbnail ?? "",
-                  Category: blog?.Category ?? "",
-                  Body: blog?.Body ?? "",
                   CreatedAt: blog?.CreatedAt ?? DateTime.Now,
                   LikesCount: blog?.LikesCount ?? 0,
                   CommentsCount: blog?.CommentsCount ?? 0
@@ -98,7 +96,7 @@ namespace Blogosphere.API.Controllers
                TotalPages = totalPages
             };
 
-            return Ok(new PagedResponse<BlogResponseDto>
+            return Ok(new PagedResponse<BlogInListResponseDto>
             {
                Data = responseBlogs,
                Metadata = metadata
@@ -118,7 +116,7 @@ namespace Blogosphere.API.Controllers
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-      public async Task<ActionResult<BlogResponseDto>> Get([FromRoute] int id)
+      public async Task<ActionResult<SingleBlogResponseDto>> Get([FromRoute] int id)
       {
          try
          {
@@ -130,7 +128,10 @@ namespace Blogosphere.API.Controllers
                return NotFound();
             }
 
-            BlogResponseDto responseBlog = new(
+            var like = await _dbContext.Likes
+               .FirstOrDefaultAsync(l => l.BlogId == id && l.UserId == (string)HttpContext.Items["UserId"]);
+
+            SingleBlogResponseDto responseBlog = new(
                   Id: blog.Id,
                   AutherId: blog.UserId,
                   AutherImage: blog?.User?.Image ?? "",
@@ -141,7 +142,8 @@ namespace Blogosphere.API.Controllers
                   Body: blog?.Body ?? "",
                   CreatedAt: blog?.CreatedAt ?? DateTime.Now,
                   LikesCount: blog?.LikesCount ?? 0,
-                  CommentsCount: blog?.CommentsCount ?? 0
+                  CommentsCount: blog?.CommentsCount ?? 0,
+                  IsLikedByUser: like != null
                );
 
             return Ok(blog);
