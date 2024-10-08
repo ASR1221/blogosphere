@@ -3,8 +3,6 @@ using Blogosphere.API.Models.Dtos;
 using Blogosphere.API.Services;
 using Microsoft.AspNetCore.Mvc;
 
-// apply blogsService to the BlogsController
-
 namespace Blogosphere.API.Controllers
 {
    [ApiController]
