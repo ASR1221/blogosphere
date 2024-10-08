@@ -11,7 +11,7 @@ public record class AddBlogDto
    public required string ThumbnailUrl { get; set; }
 
    [Required]
-   public required string Categoriy { get; set; }
+   public required string Category { get; set; }
 
    [Required]
    public required string Body { get; set; }

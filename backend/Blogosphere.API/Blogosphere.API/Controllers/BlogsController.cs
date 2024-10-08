@@ -1,9 +1,9 @@
 using Blogosphere.API.Middlewares;
-using Blogosphere.API.Models;
 using Blogosphere.API.Models.Dtos;
-using Blogosphere.API.Models.Entities;
+using Blogosphere.API.Services;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.EntityFrameworkCore;
+
+// apply blogsService to the BlogsController
 
 namespace Blogosphere.API.Controllers
 {
@@ -12,11 +12,11 @@ namespace Blogosphere.API.Controllers
    public class BlogsController : ControllerBase
    {
 
-      private readonly AppDbContext _dbContext;
+      private readonly IBlogsService _blogsService;
 
-      public BlogsController(AppDbContext context)
+      public BlogsController(IBlogsService service)
       {
-         _dbContext = context;
+         _blogsService = service;
       }
 
       [HttpGet]
@@ -35,72 +35,9 @@ namespace Blogosphere.API.Controllers
                return BadRequest(ModelState);
             }
 
-            if (category == null || category == "")
-            {
-               List<Blog> b = await _dbContext.Blogs
-                  .OrderByDescending(b => b.CreatedAt)
-                  .Take(6)
-                  .ToListAsync();
+            var response = await _blogsService.GetBlogs(category, page);
 
-               PaginationMetadata m = new()
-               {
-                  CurrentPage = 1,
-                  PageSize = 6,
-                  TotalCount = 6,
-                  TotalPages = 1
-               };
-
-               return Ok(new PagedResponse<Blog>
-               {
-                  Data = b,
-               });
-            }
-
-            page ??= 16;
-            int PageSize = 16;
-            var query = _dbContext.Blogs.AsNoTracking();
-
-            var totalCount = await query.CountAsync();
-            var totalPages = (int)Math.Ceiling(totalCount / (double)PageSize);
-
-            var skipValue = (int)((page - 1) * PageSize);
-            var blogs = await query
-               .OrderByDescending(b => b.CreatedAt)
-               .Skip(skipValue)
-               .Take(PageSize)
-               .ToListAsync();
-
-            List<BlogInListResponseDto> responseBlogs = [];
-
-            if (blogs == null) return Problem(statusCode: StatusCodes.Status500InternalServerError);
-            foreach (Blog blog in blogs)
-            {
-               responseBlogs.Add(new(
-                  Id: blog.Id,
-                  AutherId: blog.UserId,
-                  AutherImage: blog?.User?.Image ?? "",
-                  AutherName: blog?.User?.UserName ?? "",
-                  Title: blog?.Title ?? "",
-                  ThumbnailUrl: blog?.Thumbnail ?? "",
-                  CreatedAt: blog?.CreatedAt ?? DateTime.Now,
-                  LikesCount: blog?.LikesCount ?? 0,
-                  CommentsCount: blog?.CommentsCount ?? 0
-               ));
-            }
-
-            var metadata = new PaginationMetadata
-            {
-               CurrentPage = page ?? 1,
-               PageSize = PageSize,
-               TotalCount = totalCount,
-               TotalPages = totalPages
-            };
-
-            return Ok(new PagedResponse<BlogInListResponseDto>
-            {
-               Data = responseBlogs,
-               Metadata = metadata
-            });
+            return Ok(response);
          }
          catch (Exception ex)
          {
@@ -120,32 +57,13 @@ namespace Blogosphere.API.Controllers
       {
          try
          {
-            var blog = await _dbContext.Blogs
-               .FirstOrDefaultAsync(b => b.Id == id);
+            var blog = await _blogsService.GetBlog(id, HttpContext);
 
             if (blog == null)
             {
                return NotFound();
             }
-
-            var like = await _dbContext.Likes
-               .FirstOrDefaultAsync(l => l.BlogId == id && l.UserId == (string)HttpContext.Items["UserId"]);
-
-            SingleBlogResponseDto responseBlog = new(
-                  Id: blog.Id,
-                  AutherId: blog.UserId,
-                  AutherImage: blog?.User?.Image ?? "",
-                  AutherName: blog?.User?.UserName ?? "",
-                  Title: blog?.Title ?? "",
-                  ThumbnailUrl: blog?.Thumbnail ?? "",
-                  Category: blog?.Category ?? "",
-                  Body: blog?.Body ?? "",
-                  CreatedAt: blog?.CreatedAt ?? DateTime.Now,
-                  LikesCount: blog?.LikesCount ?? 0,
-                  CommentsCount: blog?.CommentsCount ?? 0,
-                  IsLikedByUser: like != null
-               );
-
+            
             return Ok(blog);
          }
          catch (Exception ex)
@@ -173,17 +91,7 @@ namespace Blogosphere.API.Controllers
                return BadRequest(ModelState);
             }
 
-            Blog newBlog = new()
-            {
-               UserId = (string)HttpContext.Items["UserId"],
-               Title = body.Title,
-               Thumbnail = body.ThumbnailUrl,
-               Category = body.Categoriy,
-               Body = body.Body
-            };
-
-            _dbContext.Blogs.Add(newBlog);
-            await _dbContext.SaveChangesAsync();
+            await _blogsService.CreateBlog(body, (string)HttpContext.Items["UserId"]);
 
             return Ok(new SuccessResponseDto(
                Token: "",
@@ -218,47 +126,21 @@ namespace Blogosphere.API.Controllers
                return BadRequest(ModelState);
             }
 
-            Blog? blog = await _dbContext.Blogs.FindAsync(id);
+            var blog = await _blogsService.UpdateBlog(body, id, (string)HttpContext.Items["UserId"]);
 
             if (blog == null)
             {
                return NotFound();
             }
 
-            if (blog.Id == (int)HttpContext.Items["UserId"])
-            {
-               return Unauthorized();
-            }
-
-            if (body.Title != null)
-            {
-               blog.Title = body.Title;
-            }
-
-            if (body.ThumbnailUrl != null)
-            {
-               blog.Thumbnail = body.ThumbnailUrl;
-            }
-
-            if (body.Body != null)
-            {
-               blog.Body = body.Body;
-            }
-
-            if (body.Category != null)
-            {
-               blog.Category = body.Category;
-            }
-
-            blog.EditedAt = DateTime.Now;
-
-            await _dbContext.SaveChangesAsync();
-
             return Ok(new SuccessResponseDto(
                Token: "",
-               Message: "Blog Edited Successfully"
+               Message: "Blog Updated Successfully"
             ));
 
+         }
+         catch (UnauthorizedAccessException ex) {
+            return Unauthorized(ex.Message);
          }
          catch (Exception ex)
          {
@@ -286,25 +168,21 @@ namespace Blogosphere.API.Controllers
                return BadRequest();
             }
 
-            var blog = await _dbContext.Blogs.FindAsync(id);
-            if (blog == null)
+            var success = await _blogsService.DeleteBlog(id, (string)HttpContext.Items["UserId"]);
+
+            if (!success)
             {
                return NotFound();
             }
-
-            if (blog.Id == (int)HttpContext.Items["UserId"])
-            {
-               return Unauthorized();
-            }
-
-            _dbContext.Blogs.Remove(blog);
-            await _dbContext.SaveChangesAsync();
 
             return Ok(new SuccessResponseDto(
                Token: "",
                Message: "Blog Deleted Successfully"
             ));
 
+         }
+         catch (UnauthorizedAccessException ex) {
+            return Unauthorized(ex.Message);
          }
          catch (Exception ex)
          {
