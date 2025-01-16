@@ -162,7 +162,12 @@ public class BlogsService : IBlogsService
 
       page ??= 16;
       int PageSize = 16;
-      var query = _dbContext.Blogs.AsNoTracking();
+      IQueryable<Blog> query;
+      if (category == null || category == "") {
+         query = _dbContext.Blogs.AsNoTracking();
+      } else {
+         query = _dbContext.Blogs.AsNoTracking().Where(b => b.Category == category);
+      }
 
       var totalCount = await query.CountAsync();
       var totalPages = (int)Math.Ceiling(totalCount / (double)PageSize);
