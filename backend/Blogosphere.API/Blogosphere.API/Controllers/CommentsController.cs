@@ -7,13 +7,13 @@ using Microsoft.AspNetCore.Mvc;
 
 namespace Blogosphere.API.Controllers
 {
-   [Route("api/comments")]
+   [Route("api/blogs/{blogId}/comments")]
    [ApiController]
    public class CommentsController(ICommentsService service) : ControllerBase
    {
       private readonly ICommentsService _commentsService = service;
 
-      [HttpGet("{blogId}")]
+      [HttpGet]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -34,7 +34,7 @@ namespace Blogosphere.API.Controllers
          }
       }
 
-      [HttpPost("{blogId}")]
+      [HttpPost]
       [RequireJwtValidation]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
