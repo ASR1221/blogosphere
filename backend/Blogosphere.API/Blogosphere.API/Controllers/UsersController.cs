@@ -61,11 +61,6 @@ namespace Blogosphere.API.Controllers
       {
          try
          {
-            if (!ModelState.IsValid)
-            {
-               return BadRequest();
-            }
-
             var success = await _userService.Delete((string)HttpContext.Items["UserId"]);
 
             if (!success)

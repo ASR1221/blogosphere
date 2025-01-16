@@ -160,12 +160,6 @@ namespace Blogosphere.API.Controllers
       {
          try
          {
-
-            if (!ModelState.IsValid)
-            {
-               return BadRequest();
-            }
-
             var success = await _blogsService.DeleteBlog(id, (string)HttpContext.Items["UserId"]);
 
             if (!success)
