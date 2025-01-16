@@ -2,6 +2,7 @@ using System.Text;
 using Blogosphere.API.Middlewares;
 using Blogosphere.API.Models;
 using Blogosphere.API.Models.Entities;
+using Blogosphere.API.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -65,6 +66,10 @@ builder.Services.AddAuthentication(options =>
 		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtKey"] ?? ""))
 	};
 });
+
+builder.Services.AddScoped<IAuthService, AuthService>();
+builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IBlogsService, BlogsService>();
 
 var app = builder.Build();
 
