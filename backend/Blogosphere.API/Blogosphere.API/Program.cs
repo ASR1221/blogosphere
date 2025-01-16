@@ -40,7 +40,7 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 
 		options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
 		options.Lockout.MaxFailedAccessAttempts = 5;
-		
+
 		options.SignIn.RequireConfirmedAccount = true;
 	}
 )
@@ -68,7 +68,7 @@ builder.Services.AddAuthentication(options =>
 });
 
 builder.Services.AddScoped<IAuthService, AuthService>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IBlogsService, BlogsService>();
 
 var app = builder.Build();

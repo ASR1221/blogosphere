@@ -4,17 +4,17 @@ using Blogosphere.API.Models.Entities;
 
 namespace Blogosphere.API.Services;
 
-public interface IUserService
+public interface IUsersService
 {
    Task<User?> Edit(string userId, EditUserDto editUserDto);
    Task<bool> Delete(string userId);
 }
 
-public class UserService : IUserService
+public class UsersService : IUsersService
 {
    private readonly AppDbContext _dbContext;
 
-   public UserService(AppDbContext dbContext) => _dbContext = dbContext;
+   public UsersService(AppDbContext dbContext) => _dbContext = dbContext;
 
    public async Task<User?> Edit(string userId, EditUserDto editUserDto)
    {
@@ -30,7 +30,7 @@ public class UserService : IUserService
       if (!string.IsNullOrEmpty(editUserDto.Image)) user.Image = editUserDto.Image;
 
       user.EditedAt = DateTime.Now;
-      
+
       await _dbContext.SaveChangesAsync();
 
       return user;
@@ -51,5 +51,5 @@ public class UserService : IUserService
 
       return true;
    }
-   
+
 }

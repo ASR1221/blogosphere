@@ -9,9 +9,9 @@ namespace Blogosphere.API.Controllers
 {
    [Route("api/users")]
    [ApiController]
-   public class UserController(IUserService userService) : ControllerBase
+   public class UsersController(IUsersService userService) : ControllerBase
    {
-      private readonly IUserService _userService = userService;
+      private readonly IUsersService _userService = userService;
 
       [HttpPatch]
       [RequireJwtValidation]
