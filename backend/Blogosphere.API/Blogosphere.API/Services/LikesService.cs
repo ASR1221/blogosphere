@@ -9,7 +9,7 @@ public interface ILikesService
    Task<bool> Delete(int likeId, string userId);
 }
 
-public class LikesService
+public class LikesService : ILikesService
 {
 
    private readonly AppDbContext _dbContext;
