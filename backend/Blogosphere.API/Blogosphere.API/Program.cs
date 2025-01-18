@@ -113,6 +113,7 @@ builder.Services.AddScoped<IBlogsService, BlogsService>();
 builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddScoped<ILikesService, LikesService>();
 builder.Services.AddScoped<ICommentsService, CommentsService>();
+builder.Services.AddScoped<IFileUploadService, FileUploadService>();
 
 var app = builder.Build();
 
