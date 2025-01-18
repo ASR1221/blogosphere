@@ -110,6 +110,9 @@ builder.Services.AddAuthentication(options =>
 builder.Services.AddScoped<IAuthService, AuthService>();
 builder.Services.AddScoped<IUsersService, UsersService>();
 builder.Services.AddScoped<IBlogsService, BlogsService>();
+builder.Services.AddScoped<ISearchService, SearchService>();
+builder.Services.AddScoped<ILikesService, LikesService>();
+builder.Services.AddScoped<ICommentsService, CommentsService>();
 
 var app = builder.Build();
 
