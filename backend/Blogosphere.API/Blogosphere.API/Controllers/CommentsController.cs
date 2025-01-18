@@ -17,11 +17,15 @@ namespace Blogosphere.API.Controllers
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-      public async Task<ActionResult<PagedResponse<Comment>>> Get([FromRoute] int blogId, [FromQuery(Name = "page")] int? page)
+      public async Task<ActionResult<PagedResponse<Comment>>> Get(
+         [FromRoute] int blogId, 
+         [FromQuery(Name = "page")] int? page,
+         [FromQuery(Name = "page_size")] int? pageSize
+      )
       {
          try
          {
-            var comments = await _commentsService.Get(blogId, page);
+            var comments = await _commentsService.Get(blogId, page, pageSize);
             return Ok(comments);
          }
          catch (Exception ex)

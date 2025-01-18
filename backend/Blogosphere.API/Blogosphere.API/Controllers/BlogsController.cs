@@ -23,7 +23,8 @@ namespace Blogosphere.API.Controllers
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]
       public async Task<ActionResult<PagedResponse<BlogInListResponseDto>>> Get(
          [FromQuery(Name = "category")] string? category,
-         [FromQuery(Name = "page")] int? page
+         [FromQuery(Name = "page")] int? page,
+         [FromQuery(Name = "page_size")] int? pageSize
       )
       {
          try
@@ -33,7 +34,7 @@ namespace Blogosphere.API.Controllers
                return BadRequest(ModelState);
             }
 
-            var response = await _blogsService.GetBlogs(category, page);
+            var response = await _blogsService.GetBlogs(category, page, pageSize);
 
             return Ok(response);
          }

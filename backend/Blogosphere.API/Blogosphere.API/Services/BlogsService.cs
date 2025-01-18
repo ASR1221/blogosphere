@@ -13,7 +13,7 @@ public interface IBlogsService
    Task<Blog?> UpdateBlog(EditBlogDto model, int id, string userId);
    Task<bool> DeleteBlog(int blogId, string userId);
    Task<SingleBlogResponseDto?> GetBlog(int blogId, HttpContext httpContex);
-   Task<PagedResponse<BlogInListResponseDto>> GetBlogs(string? category, int? page);
+   Task<PagedResponse<BlogInListResponseDto>> GetBlogs(string? category, int? page, int? pageSize);
 }
 
 public class BlogsService : IBlogsService
@@ -119,7 +119,7 @@ public class BlogsService : IBlogsService
       return responseBlog;
    }
 
-   public async Task<PagedResponse<BlogInListResponseDto>> GetBlogs(string? category, int? page)
+   public async Task<PagedResponse<BlogInListResponseDto>> GetBlogs(string? category, int? page, int? pageSize)
    {
       if (category == null || category == "")
       {
@@ -160,8 +160,8 @@ public class BlogsService : IBlogsService
          };
       }
 
-      page ??= 16;
-      int PageSize = 16;
+      page ??= 1;
+      pageSize ??= 16;
       IQueryable<Blog> query;
       if (category == null || category == "") {
          query = _dbContext.Blogs.AsNoTracking();
@@ -170,13 +170,13 @@ public class BlogsService : IBlogsService
       }
 
       var totalCount = await query.CountAsync();
-      var totalPages = (int)Math.Ceiling(totalCount / (double)PageSize);
+      var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
-      var skipValue = (int)((page - 1) * PageSize);
+      var skipValue = (int)((page - 1) * pageSize);
       var blogs = await query
          .OrderByDescending(b => b.CreatedAt)
          .Skip(skipValue)
-         .Take(PageSize)
+         .Take(pageSize ?? 16)
          .ToListAsync();
 
       List<BlogInListResponseDto> responseBlogs = [];
@@ -200,7 +200,7 @@ public class BlogsService : IBlogsService
       var metadata = new PaginationMetadata
       {
          CurrentPage = page ?? 1,
-         PageSize = PageSize,
+         PageSize = pageSize ?? 16,
          TotalCount = totalCount,
          TotalPages = totalPages
       };

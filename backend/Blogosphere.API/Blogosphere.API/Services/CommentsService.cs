@@ -10,7 +10,7 @@ public interface ICommentsService
    Task<Comment?> Create(int blogId, string userId, AddCommentDto body);
    Task<Comment?> Update(int commentId, string userId, AddCommentDto body);
    Task<bool> Delete(int blogId, string userId);
-   Task<PagedResponse<Comment>> Get(int blogId, int? page);
+   Task<PagedResponse<Comment>> Get(int blogId, int? page, int? pageSize);
 }
 
 public class CommentsService : ICommentsService
@@ -77,20 +77,20 @@ public class CommentsService : ICommentsService
       return true;
    }
 
-   public async Task<PagedResponse<Comment>> Get(int blogId, int? page)
+   public async Task<PagedResponse<Comment>> Get(int blogId, int? page, int? pageSize)
    {
       page ??= 1;
-      int PageSize = 16;
+      pageSize ??= 16;
       var query = _dbContext.Comments.AsNoTracking().Where(c => c.BlogId == blogId);;
 
       var totalCount = await query.CountAsync();
-      var totalPages = (int)Math.Ceiling(totalCount / (double)PageSize);
+      var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
 
-      var skipValue = (int)((page - 1) * PageSize);
+      var skipValue = (int)((page - 1) * pageSize);
       var comments = await query
          .OrderByDescending(b => b.CreatedAt)
          .Skip(skipValue)
-         .Take(PageSize)
+         .Take(pageSize ?? 16)
          .ToListAsync();
 
       if (comments == null) throw new Exception("An error occurred");
@@ -98,7 +98,7 @@ public class CommentsService : ICommentsService
       var metadata = new PaginationMetadata
       {
          CurrentPage = page ?? 1,
-         PageSize = PageSize,
+         PageSize = pageSize ?? 16,
          TotalCount = totalCount,
          TotalPages = totalPages
       };
