@@ -6,12 +6,12 @@ namespace Blogosphere.API.Services;
 
 public interface ISearchService
 {
-    Task<SearchResultDto> SmartSearch(
-      string searchTerm, 
-      string category = "", 
-      int page = 1, 
-      int pageSize = 16
-   );
+   Task<SearchResultDto> SmartSearch(
+     string searchTerm,
+     string category = "",
+     int page = 1,
+     int pageSize = 16
+  );
 }
 
 public class SearchService : ISearchService
@@ -24,16 +24,19 @@ public class SearchService : ISearchService
    }
 
    public async Task<SearchResultDto> SmartSearch(
-      string searchTerm, 
+      string searchTerm,
       string category = "",
-      int page = 1, 
+      int page = 1,
       int pageSize = 16
-   ) {
+   )
+   {
       if (string.IsNullOrWhiteSpace(searchTerm))
          return new SearchResultDto(
-            Blogs: new PagedResponse<BlogInListResponseDto>{
+            Blogs: new PagedResponse<BlogDto>
+            {
                Data = [],
-               Metadata = new PaginationMetadata{
+               Metadata = new PaginationMetadata
+               {
                   CurrentPage = 1,
                   PageSize = 16,
                   TotalCount = 0,
@@ -57,18 +60,18 @@ public class SearchService : ISearchService
       }
       // Search blogs
       var blogs = await blogsQuery.Select(b => new
-         {
-            b.Id,
-            b.Title,
-            b.Body,
-            b.Category,
-            b.CommentsCount,
-            b.LikesCount,
-            b.Thumbnail,
-            b.CreatedAt,
-            b.User,
-            TitleRelevance = ComputeLevenshteinDistance(b.Title.ToLower(), searchTerm),
-         })
+      {
+         b.Id,
+         b.Title,
+         b.Body,
+         b.Category,
+         b.CommentsCount,
+         b.LikesCount,
+         b.Thumbnail,
+         b.CreatedAt,
+         b.User,
+         TitleRelevance = ComputeLevenshteinDistance(b.Title.ToLower(), searchTerm),
+      })
          .Where(b => b.TitleRelevance > 0.4)
          .OrderByDescending(b => b.TitleRelevance)
          .Skip(skipValue)
@@ -77,7 +80,7 @@ public class SearchService : ISearchService
 
       if (blogs == null) throw new Exception("An error occurred");
 
-      List<BlogInListResponseDto> blogsResponse = [];
+      List<BlogDto> blogsResponse = [];
 
       var totalCount = blogs.Count;
       var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
@@ -120,17 +123,17 @@ public class SearchService : ISearchService
          if (users == null) throw new Exception("An error occurred");
          foreach (var user in users)
          {
-               usersResponse.Add(new(
-                  Id: user.Id,
-                  Name: user.UserName ?? "",
-                  Image: user.Image ?? ""
-               ));
+            usersResponse.Add(new(
+               Id: user.Id,
+               Name: user.UserName ?? "",
+               Image: user.Image ?? ""
+            ));
          }
       }
 
       var result = new SearchResultDto
       (
-         Blogs: new PagedResponse<BlogInListResponseDto>
+         Blogs: new PagedResponse<BlogDto>
          {
             Data = blogsResponse,
             Metadata = new PaginationMetadata

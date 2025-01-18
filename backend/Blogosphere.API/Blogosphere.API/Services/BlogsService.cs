@@ -12,8 +12,8 @@ public interface IBlogsService
    Task<Blog> CreateBlog(AddBlogDto model, string userId);
    Task<Blog?> UpdateBlog(EditBlogDto model, int id, string userId);
    Task<bool> DeleteBlog(int blogId, string userId);
-   Task<SingleBlogResponseDto?> GetBlog(int blogId, HttpContext httpContex);
-   Task<PagedResponse<BlogInListResponseDto>> GetBlogs(string? category, int? page, int? pageSize);
+   Task<BlogDetailsDto?> GetBlog(int blogId, HttpContext httpContex);
+   Task<PagedResponse<BlogDto>> GetBlogs(string? category, int? page, int? pageSize);
 }
 
 public class BlogsService : IBlogsService
@@ -92,7 +92,7 @@ public class BlogsService : IBlogsService
       return true;
    }
 
-   public async Task<SingleBlogResponseDto?> GetBlog(int blogId, HttpContext httpContext)
+   public async Task<BlogDetailsDto?> GetBlog(int blogId, HttpContext httpContext)
    {
       var blog = await _dbContext.Blogs.FindAsync(blogId);
       if (blog == null) return null;
@@ -100,7 +100,7 @@ public class BlogsService : IBlogsService
       var like = await _dbContext.Likes
          .FirstOrDefaultAsync(l => l.BlogId == blogId && l.UserId == (string)httpContext.Items["UserId"]);
 
-      SingleBlogResponseDto responseBlog = new(
+      BlogDetailsDto responseBlog = new(
             Id: blog.Id,
             AutherId: blog.UserId,
             AutherImage: blog?.User?.Image ?? "",
@@ -119,7 +119,7 @@ public class BlogsService : IBlogsService
       return responseBlog;
    }
 
-   public async Task<PagedResponse<BlogInListResponseDto>> GetBlogs(string? category, int? page, int? pageSize)
+   public async Task<PagedResponse<BlogDto>> GetBlogs(string? category, int? page, int? pageSize)
    {
       if (category == null || category == "")
       {
@@ -136,7 +136,7 @@ public class BlogsService : IBlogsService
             TotalPages = 1
          };
 
-         List<BlogInListResponseDto> res = [];
+         List<BlogDto> res = [];
 
          if (b == null) throw new Exception("An error occurred");
          foreach (Blog blog in b)
@@ -154,7 +154,7 @@ public class BlogsService : IBlogsService
             ));
          }
 
-         return new PagedResponse<BlogInListResponseDto>
+         return new PagedResponse<BlogDto>
          {
             Data = res,
          };
@@ -163,9 +163,12 @@ public class BlogsService : IBlogsService
       page ??= 1;
       pageSize ??= 16;
       IQueryable<Blog> query;
-      if (category == null || category == "") {
+      if (category == null || category == "")
+      {
          query = _dbContext.Blogs.AsNoTracking();
-      } else {
+      }
+      else
+      {
          query = _dbContext.Blogs.AsNoTracking().Where(b => b.Category == category);
       }
 
@@ -179,7 +182,7 @@ public class BlogsService : IBlogsService
          .Take(pageSize ?? 16)
          .ToListAsync();
 
-      List<BlogInListResponseDto> responseBlogs = [];
+      List<BlogDto> responseBlogs = [];
 
       if (blogs == null) throw new Exception("An error occurred");
       foreach (Blog blog in blogs)
@@ -205,7 +208,7 @@ public class BlogsService : IBlogsService
          TotalPages = totalPages
       };
 
-      return new PagedResponse<BlogInListResponseDto>
+      return new PagedResponse<BlogDto>
       {
          Data = responseBlogs,
          Metadata = metadata

@@ -21,7 +21,7 @@ namespace Blogosphere.API.Controllers
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-      public async Task<ActionResult<PagedResponse<BlogInListResponseDto>>> Get(
+      public async Task<ActionResult<PagedResponse<BlogDto>>> Get(
          [FromQuery(Name = "category")] string? category,
          [FromQuery(Name = "page")] int? page,
          [FromQuery(Name = "page_size")] int? pageSize
@@ -52,7 +52,7 @@ namespace Blogosphere.API.Controllers
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]
-      public async Task<ActionResult<SingleBlogResponseDto>> Get([FromRoute] int id)
+      public async Task<ActionResult<BlogDetailsDto>> Get([FromRoute] int id)
       {
          try
          {
@@ -62,7 +62,7 @@ namespace Blogosphere.API.Controllers
             {
                return NotFound();
             }
-            
+
             return Ok(blog);
          }
          catch (Exception ex)
@@ -138,7 +138,8 @@ namespace Blogosphere.API.Controllers
             ));
 
          }
-         catch (UnauthorizedAccessException ex) {
+         catch (UnauthorizedAccessException ex)
+         {
             return Unauthorized(ex.Message);
          }
          catch (Exception ex)
@@ -174,7 +175,8 @@ namespace Blogosphere.API.Controllers
             ));
 
          }
-         catch (UnauthorizedAccessException ex) {
+         catch (UnauthorizedAccessException ex)
+         {
             return Unauthorized(ex.Message);
          }
          catch (Exception ex)
