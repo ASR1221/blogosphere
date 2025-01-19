@@ -121,44 +121,44 @@ public class BlogsService : IBlogsService
 
    public async Task<PagedResponse<BlogDto>> GetBlogs(string? category, int? page, int? pageSize)
    {
-      if (category == null || category == "")
-      {
-         List<Blog> b = await _dbContext.Blogs
-            .OrderByDescending(b => b.CreatedAt)
-            .Take(6)
-            .ToListAsync();
+      // if (category == null || category == "")
+      // {
+      //    List<Blog> b = await _dbContext.Blogs
+      //       .OrderByDescending(b => b.CreatedAt)
+      //       .Take(6)
+      //       .ToListAsync();
 
-         PaginationMetadata m = new()
-         {
-            CurrentPage = 1,
-            PageSize = 6,
-            TotalCount = 6,
-            TotalPages = 1
-         };
+      //    PaginationMetadata m = new()
+      //    {
+      //       CurrentPage = 1,
+      //       PageSize = 6,
+      //       TotalCount = 6,
+      //       TotalPages = 1
+      //    };
 
-         List<BlogDto> res = [];
+      //    List<BlogDto> res = [];
 
-         if (b == null) throw new Exception("An error occurred");
-         foreach (Blog blog in b)
-         {
-            res.Add(new(
-               Id: blog.Id,
-               AutherId: blog.UserId,
-               AutherImage: blog?.User?.Image ?? "",
-               AutherName: blog?.User?.UserName ?? "",
-               Title: blog?.Title ?? "",
-               ThumbnailUrl: blog?.Thumbnail ?? "",
-               CreatedAt: blog?.CreatedAt ?? DateTime.Now,
-               LikesCount: blog?.LikesCount ?? 0,
-               CommentsCount: blog?.CommentsCount ?? 0
-            ));
-         }
+      //    if (b == null) throw new Exception("An error occurred");
+      //    foreach (Blog blog in b)
+      //    {
+      //       res.Add(new(
+      //          Id: blog.Id,
+      //          AutherId: blog.UserId,
+      //          AutherImage: blog?.User?.Image ?? "",
+      //          AutherName: blog?.User?.UserName ?? "",
+      //          Title: blog?.Title ?? "",
+      //          ThumbnailUrl: blog?.Thumbnail ?? "",
+      //          CreatedAt: blog?.CreatedAt ?? DateTime.Now,
+      //          LikesCount: blog?.LikesCount ?? 0,
+      //          CommentsCount: blog?.CommentsCount ?? 0
+      //       ));
+      //    }
 
-         return new PagedResponse<BlogDto>
-         {
-            Data = res,
-         };
-      }
+      //    return new PagedResponse<BlogDto>
+      //    {
+      //       Data = res,
+      //    };
+      // }
 
       page ??= 1;
       pageSize ??= 16;

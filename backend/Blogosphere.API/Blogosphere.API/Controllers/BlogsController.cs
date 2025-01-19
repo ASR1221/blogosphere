@@ -1,6 +1,7 @@
 using Blogosphere.API.Middlewares;
 using Blogosphere.API.Models.Dtos;
 using Blogosphere.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blogosphere.API.Controllers
@@ -29,11 +30,6 @@ namespace Blogosphere.API.Controllers
       {
          try
          {
-            if (!ModelState.IsValid)
-            {
-               return BadRequest(ModelState);
-            }
-
             var response = await _blogsService.GetBlogs(category, page, pageSize);
 
             return Ok(response);
@@ -49,6 +45,7 @@ namespace Blogosphere.API.Controllers
       }
 
       [HttpGet("{id}")]
+      [AllowAnonymous]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]

@@ -60,9 +60,9 @@ namespace Blogosphere.API.Controllers
             if (response == null) return NotFound();
             return Ok(response);
          }
-         catch (UnauthorizedAccessException)
+         catch (UnauthorizedAccessException ex)
          {
-            return Unauthorized();
+            return Unauthorized(ex.Message);
          }
          catch (Exception ex)
          {

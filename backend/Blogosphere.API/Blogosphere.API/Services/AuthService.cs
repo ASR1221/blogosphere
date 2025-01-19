@@ -42,13 +42,17 @@ public class AuthService : IAuthService
 
    public async Task<SuccessResponseDto?> Login(LoginDto model)
    {
-      var result = await _signInManager.PasswordSignInAsync(model.Email, model.Password, false, false);
+      var user = await _userManager.FindByEmailAsync(model.Email);
+      if (user == null)
+      {
+         Console.WriteLine("User not found");
+         return null;
+      }
+
+      var result = await _signInManager.PasswordSignInAsync(user.UserName!, model.Password, false, false);
 
       if (result.Succeeded)
       {
-         User? user = await _userManager.FindByEmailAsync(model.Email);
-         if (user == null) return null;
-
          var token = GenerateJwtToken(user);
          return new SuccessResponseDto(token, "User logged in successfully");
       }

@@ -78,10 +78,11 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 		options.Password.RequireUppercase = true;
 		options.Password.RequireNonAlphanumeric = false;
 
-		options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromMinutes(15);
+		options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(7);
 		options.Lockout.MaxFailedAccessAttempts = 5;
 
-		options.SignIn.RequireConfirmedAccount = true;
+		options.SignIn.RequireConfirmedAccount = false;
+		options.SignIn.RequireConfirmedEmail = false;
 	}
 )
 .AddEntityFrameworkStores<AppDbContext>()

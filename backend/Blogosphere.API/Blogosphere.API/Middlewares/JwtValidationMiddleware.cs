@@ -8,6 +8,7 @@ using Microsoft.IdentityModel.Tokens;
 using System;
 using System.IdentityModel.Tokens.Jwt;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 
@@ -24,7 +25,7 @@ public class JwtValidationMiddleware
 
    public async Task Invoke(HttpContext context)
    {
-      var token = context.Request.Headers.Authorization.FirstOrDefault()?.Split(" ").Last();
+      var token = context.Request.Headers.Authorization.FirstOrDefault()?.Split("Bearer ").Last();
 
       if (token != null)
       {
@@ -45,16 +46,18 @@ public class JwtValidationMiddleware
             }, out SecurityToken validatedToken);
 
             var jwtToken = (JwtSecurityToken)validatedToken;
-            var userId = int.Parse(jwtToken.Claims.First(x => x.Type == "id").Value);
+            var userId = jwtToken.Claims.First(x => x.Type == ClaimTypes.NameIdentifier).Value;
 
             // Add the validated user id to the context items
             context.Items["UserId"] = userId;
          }
-         catch
+         catch (Exception ex)
          {
-            context.Response.StatusCode = 401;
-            await context.Response.WriteAsync("Unauthorized");
-            return;
+            Console.WriteLine("Invalid token");
+            Console.WriteLine(ex.Message);
+            // context.Response.StatusCode = 401;
+            // await context.Response.WriteAsync("Unauthorized");
+            // return;
          }
       }
 
