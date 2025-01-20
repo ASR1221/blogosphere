@@ -27,14 +27,11 @@ namespace Blogosphere.API.Controllers
       {
          try
          {
-            Console.WriteLine("SEARCH Conrtoller");
             var result = await _searchService.SmartSearch(query, category, page, pageSize);
-            Console.WriteLine("SEARCH Conrtoller 2");
             return Ok(result);
          }
          catch (Exception ex)
          {
-            Console.WriteLine("SEARCH Conrtoller 3");
             return Problem(
                 detail: ex.Message,
                 title: "An error occurred",
