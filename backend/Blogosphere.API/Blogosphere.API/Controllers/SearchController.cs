@@ -1,5 +1,6 @@
 using Blogosphere.API.Models.Dtos;
 using Blogosphere.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -13,6 +14,7 @@ namespace Blogosphere.API.Controllers
       private readonly ISearchService _searchService = service;
 
       [HttpGet]
+      [AllowAnonymous]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]
       public ActionResult<ActionResult<SearchResultDto>> Search(

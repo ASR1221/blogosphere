@@ -2,6 +2,7 @@ using Blogosphere.API.Middlewares;
 using Blogosphere.API.Models.Dtos;
 using Blogosphere.API.Models.Entities;
 using Blogosphere.API.Services;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 
@@ -14,6 +15,7 @@ namespace Blogosphere.API.Controllers
       private readonly ICommentsService _commentsService = service;
 
       [HttpGet]
+      [AllowAnonymous]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]

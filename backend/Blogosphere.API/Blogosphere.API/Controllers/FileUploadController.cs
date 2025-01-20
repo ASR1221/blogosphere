@@ -1,6 +1,7 @@
 using Microsoft.AspNetCore.Mvc;
 using Blogosphere.API.Services;
 using Blogosphere.API.Models.Dtos;
+using Blogosphere.API.Middlewares;
 
 namespace Blogosphere.API.Controllers
 {
@@ -16,8 +17,10 @@ namespace Blogosphere.API.Controllers
       }
 
       [HttpPost("single")]
+      [RequireJwtValidation]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
+      [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]
       public async Task<ActionResult<FileUploadDto>> UploadFile(
          IFormFile file,
@@ -43,8 +46,10 @@ namespace Blogosphere.API.Controllers
       }
 
       [HttpPost("multiple")]
+      [RequireJwtValidation]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
+      [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]
       public async Task<ActionResult<List<FileUploadDto>>> UploadMultipleFiles(
          [FromForm] IFormFileCollection files,

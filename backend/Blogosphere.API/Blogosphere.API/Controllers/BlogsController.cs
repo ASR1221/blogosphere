@@ -19,6 +19,7 @@ namespace Blogosphere.API.Controllers
       }
 
       [HttpGet]
+      [AllowAnonymous]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]

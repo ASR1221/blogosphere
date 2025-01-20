@@ -1,5 +1,6 @@
 using Blogosphere.API.Middlewares;
 using Blogosphere.API.Models.Dtos;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
 namespace Blogosphere.API.Controllers
@@ -16,6 +17,7 @@ namespace Blogosphere.API.Controllers
       }
 
       [HttpPost("register")]
+      [AllowAnonymous]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -42,6 +44,7 @@ namespace Blogosphere.API.Controllers
       }
 
       [HttpPost("login")]
+      [AllowAnonymous]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
