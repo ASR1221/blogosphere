@@ -16,6 +16,7 @@ namespace Blogosphere.API.Controllers
 
       [HttpGet]
       [AllowAnonymous]
+      [ResponseCache(CacheProfileName = "120SecondsDuration")]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]

@@ -20,6 +20,7 @@ namespace Blogosphere.API.Controllers
 
       [HttpGet]
       [AllowAnonymous]
+      [ResponseCache(CacheProfileName = "120SecondsDuration")]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status400BadRequest)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]
@@ -47,6 +48,7 @@ namespace Blogosphere.API.Controllers
 
       [HttpGet("{id}")]
       [AllowAnonymous]
+      [ResponseCache(CacheProfileName = "120SecondsDuration")]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status404NotFound)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]

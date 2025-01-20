@@ -16,6 +16,7 @@ namespace Blogosphere.API.Controllers
 
       [HttpGet]
       [AllowAnonymous]
+      [ResponseCache(CacheProfileName = "120SecondsDuration")]
       [ProducesResponseType(StatusCodes.Status200OK)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]
       public async Task<ActionResult<ActionResult<SearchResultDto>>> Search(
