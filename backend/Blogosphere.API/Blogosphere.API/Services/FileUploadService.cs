@@ -4,8 +4,8 @@ namespace Blogosphere.API.Services;
 
 public interface IFileUploadService
 {
-   Task<FileUploadDto> UploadFileAsync(IFormFile file, string allowedExtensions);
-   Task<List<FileUploadDto>> UploadMultipleFilesAsync(IFormFileCollection files, string allowedExtensions);
+   Task<FileUploadDto> UploadFileAsync(IFormFile file);
+   Task<List<FileUploadDto>> UploadMultipleFilesAsync(IFormFileCollection files);
 }
 
 public class FileUploadService : IFileUploadService
@@ -21,14 +21,22 @@ public class FileUploadService : IFileUploadService
       _configuration = configuration;
    }
 
-   public async Task<FileUploadDto> UploadFileAsync(IFormFile file, string allowedExtensions)
+   public async Task<FileUploadDto> UploadFileAsync(IFormFile file)
    {
+      string allowedExtensions = ".jpg,.jpeg,.png,.gif";
+
       if (file == null || file.Length == 0)
          throw new ArgumentException("No file was provided");
 
       ValidateFile(file, allowedExtensions);
 
       var fileName = GetUniqueFileName(file.FileName);
+
+      if (string.IsNullOrEmpty(_environment.WebRootPath))
+      {
+         _environment.WebRootPath = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot");
+      }
+
       var uploadsFolder = Path.Combine(_environment.WebRootPath, "uploads");
 
       // Create uploads directory if it doesn't exist
@@ -53,12 +61,12 @@ public class FileUploadService : IFileUploadService
       );
    }
 
-   public async Task<List<FileUploadDto>> UploadMultipleFilesAsync(IFormFileCollection files, string allowedExtensions)
+   public async Task<List<FileUploadDto>> UploadMultipleFilesAsync(IFormFileCollection files)
    {
       if (files == null || !files.Any())
          throw new ArgumentException("No files were provided");
 
-      var uploadTasks = files.Select(file => UploadFileAsync(file, allowedExtensions));
+      var uploadTasks = files.Select(file => UploadFileAsync(file));
       return await Task.WhenAll(uploadTasks).ContinueWith(t => t.Result.ToList());
    }
 

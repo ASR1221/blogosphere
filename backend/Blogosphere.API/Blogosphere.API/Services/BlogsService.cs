@@ -49,7 +49,7 @@ public class BlogsService : IBlogsService
       var blog = await _dbContext.Blogs.FindAsync(id);
       if (blog == null) return null;
 
-      if (blog.UserId == userId)
+      if (blog.UserId != userId)
       {
          throw new UnauthorizedAccessException("You are not authorized to edit this blog");
       }
@@ -81,7 +81,7 @@ public class BlogsService : IBlogsService
       var blog = await _dbContext.Blogs.FindAsync(blogId);
       if (blog == null) return false;
 
-      if (blog.UserId == userId)
+      if (blog.UserId != userId)
       {
          throw new UnauthorizedAccessException("You are not authorized to delete this blog");
       }

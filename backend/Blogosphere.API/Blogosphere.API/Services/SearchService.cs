@@ -8,9 +8,9 @@ public interface ISearchService
 {
    Task<SearchResultDto> SmartSearch(
      string searchTerm,
-     string category = "",
-     int page = 1,
-     int pageSize = 16
+     string category,
+     int page,
+     int pageSize
   );
 }
 
@@ -48,87 +48,97 @@ public class SearchService : ISearchService
 
       searchTerm = searchTerm.ToLower();
 
-      var skipValue = (page - 1) * pageSize;
-
+      // First get all matching blogs from database
       var blogsQuery = _context.Blogs
-        .AsNoTracking()
-        .Where(b => b.Title.Contains(searchTerm, StringComparison.CurrentCultureIgnoreCase));
+         .AsNoTracking()
+         .Where(b => b.Title.ToLower().Contains(searchTerm));
 
       if (!string.IsNullOrEmpty(category))
       {
-         blogsQuery = blogsQuery.Where(b => (b.Category ?? "").Equals(category, StringComparison.CurrentCultureIgnoreCase));
+         blogsQuery = blogsQuery.Where(b => (b.Category ?? "").ToLower().Contains(category));
       }
-      // Search blogs
-      var blogs = await blogsQuery.Select(b => new
-      {
-         b.Id,
-         b.Title,
-         b.Body,
-         b.Category,
-         b.CommentsCount,
-         b.LikesCount,
-         b.Thumbnail,
-         b.CreatedAt,
-         b.User,
-         TitleRelevance = ComputeLevenshteinDistance(b.Title.ToLower(), searchTerm),
-      })
-         .Where(b => b.TitleRelevance > 0.4)
-         .OrderByDescending(b => b.TitleRelevance)
-         .Skip(skipValue)
-         .Take(pageSize)
+
+      // Get all matching blogs
+      var allMatchingBlogs = await blogsQuery
+         .Select(b => new
+         {
+            b.Id,
+            b.Title,
+            b.Body,
+            b.Category,
+            b.CommentsCount,
+            b.LikesCount,
+            b.Thumbnail,
+            b.CreatedAt,
+            b.User
+         })
+         .Take(1000) // to prevent out of memory
          .ToListAsync();
 
-      if (blogs == null) throw new Exception("An error occurred");
+      // Apply Levenshtein Distance in memory
+      var tempFilteredBlogs = allMatchingBlogs
+         .Select(b => new
+         {
+            Blog = b,
+            TitleRelevance = ComputeLevenshteinDistance(b.Title.ToLower(), searchTerm)
+         })
+         .Where(b => b.TitleRelevance > 0.4);
 
-      List<BlogDto> blogsResponse = [];
+      var filteredBlogs = tempFilteredBlogs
+         .OrderByDescending(b => b.TitleRelevance)
+         .Skip((page - 1) * pageSize)
+         .Take(pageSize)
+         .ToList();
 
-      var totalCount = blogs.Count;
+      if (filteredBlogs == null) throw new Exception("An error occurred");
+
+      var blogsResponse = filteredBlogs.Select(blog => new BlogDto(
+         Id: blog.Blog.Id,
+         AutherId: blog.Blog.User?.Id ?? "",
+         AutherImage: blog.Blog.User?.Image ?? "",
+         AutherName: blog.Blog.User?.UserName ?? "",
+         Title: blog.Blog.Title ?? "",
+         ThumbnailUrl: blog.Blog.Thumbnail ?? "",
+         CreatedAt: blog.Blog.CreatedAt,
+         LikesCount: blog.Blog.LikesCount,
+         CommentsCount: blog.Blog.CommentsCount
+      )).ToList();
+
+      var totalCount = tempFilteredBlogs.ToList().Count;
       var totalPages = (int)Math.Ceiling(totalCount / (double)pageSize);
-
-      foreach (var blog in blogs)
-      {
-         blogsResponse.Add(new(
-            Id: blog.Id,
-            AutherId: blog?.User?.Id ?? "",
-            AutherImage: blog?.User?.Image ?? "",
-            AutherName: blog?.User?.UserName ?? "",
-            Title: blog?.Title ?? "",
-            ThumbnailUrl: blog?.Thumbnail ?? "",
-            CreatedAt: blog?.CreatedAt ?? DateTime.Now,
-            LikesCount: blog?.LikesCount ?? 0,
-            CommentsCount: blog?.CommentsCount ?? 0
-         ));
-      }
-
 
       List<UserSearchResult> usersResponse = [];
 
       if (string.IsNullOrEmpty(category))
       {
-         var users = await _context.Users
-               .AsNoTracking()
-               .Where(b => (b.UserName ?? "").Contains(searchTerm, StringComparison.CurrentCultureIgnoreCase))
-               .Select(a => new
-               {
-                  a.Id,
-                  a.UserName,
-                  a.Image,
-                  NameRelevance = ComputeLevenshteinDistance((a.UserName ?? "").ToLower() ?? "", searchTerm)
-               })
-               .Where(a => a.NameRelevance > 0.5)
-               .OrderByDescending(b => b.NameRelevance)
-               .Take(16)
-               .ToListAsync();
+         // Get matching users from database
+         var matchingUsers = await _context.Users
+            .AsNoTracking()
+            .Where(b => (b.UserName ?? "").ToLower().Contains(searchTerm))
+            .Select(a => new
+            {
+               a.Id,
+               a.UserName,
+               a.Image
+            })
+            .ToListAsync();
 
-         if (users == null) throw new Exception("An error occurred");
-         foreach (var user in users)
-         {
-            usersResponse.Add(new(
-               Id: user.Id,
-               Name: user.UserName ?? "",
-               Image: user.Image ?? ""
-            ));
-         }
+         // Apply Levenshtein Distance in memory
+         usersResponse = matchingUsers
+            .Select(u => new
+            {
+               User = u,
+               NameRelevance = ComputeLevenshteinDistance((u.UserName ?? "").ToLower(), searchTerm)
+            })
+            .Where(u => u.NameRelevance > 0.5)
+            .OrderByDescending(u => u.NameRelevance)
+            .Take(16)
+            .Select(u => new UserSearchResult(
+               Id: u.User.Id,
+               Name: u.User.UserName ?? "",
+               Image: u.User.Image ?? ""
+            ))
+            .ToList();
       }
 
       var result = new SearchResultDto

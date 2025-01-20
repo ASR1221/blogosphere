@@ -21,7 +21,7 @@ public class UsersService : IUsersService
       var user = await _dbContext.Users.FindAsync(userId);
       if (user == null) return null;
 
-      if (user.Id == userId)
+      if (user.Id != userId)
       {
          throw new UnauthorizedAccessException("You are not authorized to edit this blog");
       }
@@ -41,7 +41,7 @@ public class UsersService : IUsersService
       var user = await _dbContext.Users.FindAsync(userId);
       if (user == null) return false;
 
-      if (user.Id == userId)
+      if (user.Id != userId)
       {
          throw new UnauthorizedAccessException("You are not authorized to edit this blog");
       }

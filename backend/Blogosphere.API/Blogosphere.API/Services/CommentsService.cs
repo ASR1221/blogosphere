@@ -35,6 +35,7 @@ public class CommentsService : ICommentsService
          EditedAt = DateTime.Now
       };
 
+      blog.CommentsCount++;
       _dbContext.Comments.Add(comment);
       await _dbContext.SaveChangesAsync();
 
@@ -46,7 +47,7 @@ public class CommentsService : ICommentsService
       var comment = await _dbContext.Comments.FindAsync(commentId);
       if (comment == null) return null;
 
-      if (comment.UserId == userId)
+      if (comment.UserId != userId)
       {
          throw new UnauthorizedAccessException("You are not authorized to edit this blog");
       }
@@ -63,15 +64,18 @@ public class CommentsService : ICommentsService
 
    public async Task<bool> Delete(int commentId, string userId)
    {
-      var comment = await _dbContext.Blogs.FindAsync(commentId);
+      var comment = await _dbContext.Comments.FindAsync(commentId);
       if (comment == null) return false;
 
-      if (comment.UserId == userId)
+      if (comment.UserId != userId)
       {
          throw new UnauthorizedAccessException("You are not authorized to delete this blog");
       }
 
-      _dbContext.Blogs.Remove(comment);
+      var blog = await _dbContext.Blogs.FindAsync(comment.BlogId);
+      if (blog != null) blog.CommentsCount--;
+      
+      _dbContext.Comments.Remove(comment);
       await _dbContext.SaveChangesAsync();
 
       return true;

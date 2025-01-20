@@ -23,20 +23,31 @@ namespace Blogosphere.API.Controllers
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]
       public async Task<ActionResult<FileUploadDto>> UploadFile(
-         IFormFile file,
-         [FromQuery] string allowedExtensions = ".jpg,.jpeg,.png,.gif"
+         [FromForm] IFormFile file
       ) {
          try
          {
-            var result = await _fileUploadService.UploadFileAsync(file, allowedExtensions);
+            Console.WriteLine("FILE UPLOAD");
+            if (file == null || file.Length == 0) {
+               return BadRequest(new { error = "No file was provided" });
+            }
+            Console.WriteLine("FILE UPLOAD 2");
+
+            var result = await _fileUploadService.UploadFileAsync(file);
+            Console.WriteLine("FILE UPLOAD 3");
+
             return Ok(result);
          }
          catch (ArgumentException ex)
          {
+            Console.WriteLine("FILE UPLOAD 4");
+
             return BadRequest(new { error = ex.Message });
          }
          catch (Exception ex)
          {
+            Console.WriteLine("FILE UPLOAD 5");
+
             return Problem(
                detail: ex.Message,
                title: "An error occurred",
@@ -52,12 +63,11 @@ namespace Blogosphere.API.Controllers
       [ProducesResponseType(StatusCodes.Status401Unauthorized)]
       [ProducesResponseType(StatusCodes.Status500InternalServerError)]
       public async Task<ActionResult<List<FileUploadDto>>> UploadMultipleFiles(
-         [FromForm] IFormFileCollection files,
-         [FromQuery] string allowedExtensions = ".jpg,.jpeg,.png,.gif"
-      ) {
+         [FromForm] IFormFileCollection files
+      ) {         
          try
          {
-            var results = await _fileUploadService.UploadMultipleFilesAsync(files, allowedExtensions);
+            var results = await _fileUploadService.UploadMultipleFilesAsync(files);
             return Ok(results);
          }
          catch (ArgumentException ex)
