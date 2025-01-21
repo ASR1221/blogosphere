@@ -20,7 +20,7 @@ jobs:
         run: dotnet build ./backend/Blogosphere.API/Blogosphere.API --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish ./backend/Blogosphere.API/Blogosphere.API -c Release -o ${{env.DOTNET_ROOT}}/myapp
+        run: dotnet publish ./backend/Blogosphere.API/Blogosphere.API -c Release -o .
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
@@ -57,6 +57,6 @@ jobs:
         with:
           app-name: 'Blogosphere'
           slot-name: 'Production'
-          package: ${{env.DOTNET_ROOT}}/myapp
+          package: ./backend/Blogosphere.API/Blogosphere.API
 
           
