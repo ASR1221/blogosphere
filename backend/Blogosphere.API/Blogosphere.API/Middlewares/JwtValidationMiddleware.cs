@@ -32,15 +32,15 @@ public class JwtValidationMiddleware
          try
          {
             var tokenHandler = new JwtSecurityTokenHandler();
-            var key = Encoding.ASCII.GetBytes(_configuration["JwtKey"] ?? "");
+            var key = Encoding.ASCII.GetBytes(Environment.GetEnvironmentVariable("JwtKey") ?? "");
             tokenHandler.ValidateToken(token, new TokenValidationParameters
             {
                ValidateIssuerSigningKey = true,
                IssuerSigningKey = new SymmetricSecurityKey(key),
                ValidateIssuer = true,
-               ValidIssuer = _configuration["JwtIssuer"],
+               ValidIssuer = Environment.GetEnvironmentVariable("JwtIssuer"),
                ValidateAudience = true,
-               ValidAudience = _configuration["JwtAudience"],
+               ValidAudience = Environment.GetEnvironmentVariable("JwtAudience"),
                ValidateLifetime = true,
                ClockSkew = TimeSpan.Zero
             }, out SecurityToken validatedToken);

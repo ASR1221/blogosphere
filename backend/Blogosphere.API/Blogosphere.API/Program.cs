@@ -61,7 +61,7 @@ builder.Services.AddSwaggerGen(options =>
 });
 
 
-string connectionString = builder.Configuration["MySQLDbConnectionString"] ?? "";
+string connectionString = Environment.GetEnvironmentVariable("DB_CONNECTION_STRING") ?? "";
 
 builder.Services.AddDbContext<AppDbContext>(
 	dbContextOptions => dbContextOptions
@@ -82,7 +82,7 @@ builder.Services.AddIdentity<User, IdentityRole>(options =>
 		options.Password.RequireUppercase = true;
 		options.Password.RequireNonAlphanumeric = false;
 
-		options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(7);
+		options.Lockout.DefaultLockoutTimeSpan = TimeSpan.FromDays(double.Parse(Environment.GetEnvironmentVariable("JwtExpireDays") ?? "7"));
 		options.Lockout.MaxFailedAccessAttempts = 5;
 
 		options.SignIn.RequireConfirmedAccount = false;
@@ -106,9 +106,9 @@ builder.Services.AddAuthentication(options =>
 		ValidateAudience = true,
 		ValidateLifetime = true,
 		ValidateIssuerSigningKey = true,
-		ValidIssuer = builder.Configuration["JwtIssuer"],
-		ValidAudience = builder.Configuration["JwtAudience"],
-		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JwtKey"] ?? ""))
+		ValidIssuer = Environment.GetEnvironmentVariable("JwtIssuer") ?? "",
+		ValidAudience = Environment.GetEnvironmentVariable("JwtAudience") ?? "",
+		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JwtKey") ?? ""))
 	};
 });
 
