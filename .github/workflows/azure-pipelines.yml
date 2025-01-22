@@ -16,5 +16,5 @@ jobs:
         password: ${{ secrets.REGISTRY_PASSWORD }}
     - name: Build and push container image to registry
       run: |
-        docker compose build ../../backend/Blogosphere.API/Blogosphere.API/
-        docker compose push
+        cd ./backend/Blogosphere.API/Blogosphere.API/
+        docker compose build --push
