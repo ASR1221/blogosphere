@@ -14,5 +14,5 @@ jobs:
         username: ${{ secrets.REGISTRY_USERNAME }}
         password: ${{ secrets.REGISTRY_PASSWORD }}
     - run: |
-        docker-compose build ./backend/Blogosphere.API/Blogosphere.API/ -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/myapp:${{ env.VERSION  }}
-        docker-compose push ${{ secrets.REGISTRY_LOGIN_SERVER }}/blogospherebackend:${{ env.VERSION  }}
+        docker compose build ./backend/Blogosphere.API/Blogosphere.API/ -t ${{ secrets.REGISTRY_LOGIN_SERVER }}/myapp:${{ env.VERSION  }}
+        docker compose push ${{ secrets.REGISTRY_LOGIN_SERVER }}/blogospherebackend:${{ env.VERSION  }}
