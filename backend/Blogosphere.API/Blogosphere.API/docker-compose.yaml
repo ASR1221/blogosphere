@@ -1,0 +1,8 @@
+services:
+  blogosphere-backend:
+    image: mainregistery.azurecr.io/blogosphere-backend:v1.0
+    build:
+      context: .
+    ports:
+      - 8080:80
+      - 8081:443
