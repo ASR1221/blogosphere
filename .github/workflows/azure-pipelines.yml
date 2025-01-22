@@ -17,10 +17,10 @@ jobs:
           dotnet-version: '8.x'
 
       - name: Build with dotnet
-        run: dotnet build ./backend/Blogosphere.API/Blogosphere.API --configuration Release
+        run: dotnet build ./backend/Blogosphere.API --configuration Release
 
       - name: dotnet publish
-        run: dotnet publish ./backend/Blogosphere.API/Blogosphere.API -c Release -o .
+        run: dotnet publish ./backend/Blogosphere.API -c Release -o .
 
       - name: Upload artifact for deployment job
         uses: actions/upload-artifact@v4
