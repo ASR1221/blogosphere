@@ -106,9 +106,9 @@ builder.Services.AddAuthentication(options =>
 		ValidateAudience = true,
 		ValidateLifetime = true,
 		ValidateIssuerSigningKey = true,
-		ValidIssuer = Environment.GetEnvironmentVariable("JwtIssuer") ?? "",
-		ValidAudience = Environment.GetEnvironmentVariable("JwtAudience") ?? "",
-		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JwtKey") ?? ""))
+		ValidIssuer = Environment.GetEnvironmentVariable("JwtIssuer") ?? "a",
+		ValidAudience = Environment.GetEnvironmentVariable("JwtAudience") ?? "a",
+		IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(Environment.GetEnvironmentVariable("JwtKey") ?? "randomKeysoThatNoErrorIsThrownIfENVIsNotSet123456789abcdefgh")),
 	};
 });
 
