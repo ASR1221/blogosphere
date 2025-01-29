@@ -1,3 +1,4 @@
 **/.vs
 **/.vscode
 **/wwwroot/uploads
+backend.service
